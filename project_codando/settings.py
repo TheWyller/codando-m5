@@ -53,6 +53,7 @@ MY_APPS = [
     'categories',
     'commets',
     'interactions',
+    'languages',
     'posts',
     'users',
 ]
