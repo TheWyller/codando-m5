@@ -4,6 +4,6 @@ from . import views
 
 urlpatterns = [
     path('login/', obtain_auth_token),
-    path('users/', views.____.as_view()),
-    path('users/<str:user>/', views.____.as_view()),
+    path('users/', views.UserView.as_view()),
+    path('users/<str:user_id>/', views.UserDetailView.as_view()),
 ]
