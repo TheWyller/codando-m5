@@ -1,0 +1,57 @@
+from rest_framework import serializers
+from .models import Post
+from rest_framework.validators import UniqueValidator
+from users.serializers import UserSerializer
+from languages.serializers import LanguageSerializer
+from .services import get_comments_list, get_interactions_report
+
+
+class PostSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Post
+        fields = [
+            "id",
+            "user",
+            "language",
+            "categories",
+            "date",
+            "url_doc",
+            "is_active",
+            "title",
+            "description",
+            "url_logo",
+            "comments",
+            "interactions",
+        ]
+        extra_kwargs = {
+            "title": {
+                "validators": [
+                    UniqueValidator(
+                        queryset=Post.objects.all(),
+                        message="Post title already exists",
+                    )
+                ]
+            },
+            "url_doc": {
+                "validators": [
+                    UniqueValidator(
+                        queryset=Post.objects.all(),
+                        message="A post with this documentation link already exists already exists",
+                    )
+                ]
+            },
+            "user": {"read_only": True},
+            "language": {"read_only": True},
+            "comments": {"read_only": True},
+            "interactions": {"read_only": True},
+        }
+        user = UserSerializer()
+        language = LanguageSerializer()
+        comments = serializers.SerializerMethodField(read_only=True)
+        interactions = serializers.SerializerMethodField(read_only=True)
+
+        def get_comments(self, obj: Post):
+            return get_comments_list(obj)
+
+        def get_interactions(self, obj: Post):
+            return get_interactions_report(obj)
