@@ -7,7 +7,6 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from languages.models import Language
 from posts.permissions import ListUpdateDeletePermission
-import users
 
 from .models import Post
 from categories.models import Category
