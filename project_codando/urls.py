@@ -21,4 +21,6 @@ urlpatterns = [
     path('api/', include('users.urls')),
     path('api/', include('posts.urls')),
     path('api/', include('commets.urls')),
+    path('api/', include('languages.urls')),
+    path('api/', include('categories.urls')),
 ]
