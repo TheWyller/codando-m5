@@ -5,6 +5,7 @@ from django.shortcuts import get_object_or_404
 
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
+from languages.models import Language
 from posts.permissions import ListUpdateDeletePermission
 
 from .models import Post
@@ -27,6 +28,14 @@ class PostView(generics.ListCreateAPIView):
     serializer_class = PostSerializer
     queryset = Post.objects.all()
 
+    def perform_create(self, serializer):
+        language_id = self.request.data["language"]
+        user = self.request.user
+        language = get_object_or_404(Language, pk = language_id)
+
+        serializer.save(language = language, user = user)
+
+
 
 class PostDetailView(generics.RetrieveUpdateDestroyAPIView):
     authentication_classes = [TokenAuthentication]
@@ -36,6 +45,7 @@ class PostDetailView(generics.RetrieveUpdateDestroyAPIView):
 
     serializer_class = PostSerializer
     queryset = Post.objects.all()
+
 
 
 class PostOnCategoryView(generics.ListAPIView):

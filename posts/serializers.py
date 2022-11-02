@@ -1,4 +1,6 @@
 from rest_framework import serializers
+
+from categories.serializers import CategorySerializer
 from .models import Post
 from rest_framework.validators import UniqueValidator
 from users.serializers import UserSerializer
@@ -7,6 +9,9 @@ from .services import get_comments_list, get_interactions_report
 
 
 class PostSerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only=True)
+    language = LanguageSerializer(read_only=True)
+    # categories = CategorySerializer(read_only=True)
     class Meta:
         model = Post
         fields = [
@@ -20,8 +25,8 @@ class PostSerializer(serializers.ModelSerializer):
             "title",
             "description",
             "url_logo",
-            "comments",
-            "interactions",
+            # "comments",
+            # "interactions",
         ]
         extra_kwargs = {
             "title": {
@@ -42,13 +47,12 @@ class PostSerializer(serializers.ModelSerializer):
             },
             "user": {"read_only": True},
             "language": {"read_only": True},
-            "comments": {"read_only": True},
-            "interactions": {"read_only": True},
+            # "comments": {"read_only": True},
+            # "interactions": {"read_only": True},
         }
-        user = UserSerializer()
-        language = LanguageSerializer()
-        comments = serializers.SerializerMethodField(read_only=True)
-        interactions = serializers.SerializerMethodField(read_only=True)
+        
+        # comments = serializers.SerializerMethodField(read_only=True)
+        # interactions = serializers.SerializerMethodField(read_only=True)
 
         def get_comments(self, obj: Post):
             return get_comments_list(obj)
