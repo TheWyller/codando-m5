@@ -31,10 +31,9 @@ class PostView(generics.ListCreateAPIView):
     def perform_create(self, serializer):
         language_id = self.request.data["language"]
         user = self.request.user
-        language = get_object_or_404(Language, pk = language_id)
+        language = get_object_or_404(Language, pk=language_id)
 
-        serializer.save(language = language, user = user)
-
+        serializer.save(language=language, user=user)
 
 
 class PostDetailView(generics.RetrieveUpdateDestroyAPIView):
@@ -47,7 +46,6 @@ class PostDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Post.objects.all()
 
 
-
 class PostOnCategoryView(generics.ListAPIView):
 
     serializer_class = CategorySerializer
@@ -58,3 +56,15 @@ class PostOnCategoryView(generics.ListAPIView):
         category_id = self.kwargs["category_id"]
         category = get_object_by_id(Category, id=category_id)
         return category.posts
+
+
+class PostsSelfUser(generics.ListAPIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    serializer_class = PostSerializer
+
+    def get_queryset(self):
+        user = self.request.user
+
+        return Post.objects.filter(user=user.id)
