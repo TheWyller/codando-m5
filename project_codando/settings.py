@@ -165,3 +165,10 @@ if DATABASE_URL:
     DATABASES["default"].update(db)
 
     DEBUG = False
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': '{C}odando API',
+    'DESCRIPTION': "The idea of ​​the project is to develop an api that can list the frameworks and features of each language based on the popularity of the application's users.",
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+}

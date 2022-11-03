@@ -7,6 +7,8 @@ from commets.serializers import CommentSerializer
 from commets.models import Comment
 from posts.models import Post
 from users.permissions import CreateListPermission,ListUpdateDeletePermission
+from drf_spectacular.utils import extend_schema
+
 class CommentView(generics.ListCreateAPIView):
     authentication_classes = [TokenAuthentication]
 
@@ -20,7 +22,7 @@ class CommentView(generics.ListCreateAPIView):
 
         serializer.save(user_id=user.id, post_id = post.id)
 
-
+@extend_schema(methods=['PUT'], exclude=True)
 class CommentDetailView(generics.RetrieveUpdateDestroyAPIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [ListUpdateDeletePermission]

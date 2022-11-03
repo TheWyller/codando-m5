@@ -13,6 +13,7 @@ from categories.models import Category
 
 from .serializers import PostSerializer
 from categories.serializers import CategorySerializer
+from drf_spectacular.utils import extend_schema
 
 
 def get_object_by_id(model, **kwargs):
@@ -35,7 +36,7 @@ class PostView(generics.ListCreateAPIView):
 
         serializer.save(language=language, user=user)
 
-
+@extend_schema(methods=['PUT'], exclude=True)
 class PostDetailView(generics.RetrieveUpdateDestroyAPIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [ListUpdateDeletePermission]

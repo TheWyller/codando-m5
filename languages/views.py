@@ -9,6 +9,7 @@ from languages.permissions import LanguagePermission
 
 
 from rest_framework.permissions import IsAuthenticated
+from drf_spectacular.utils import extend_schema
 
 
 class LanguageView(generics.ListCreateAPIView):
@@ -18,7 +19,7 @@ class LanguageView(generics.ListCreateAPIView):
     serializer_class = LanguageSerializer
     queryset = Language.objects.all()
 
-
+@extend_schema(methods=['PUT'], exclude=True)
 class LanguageDetailView(generics.RetrieveUpdateDestroyAPIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated, LanguagePermission]
