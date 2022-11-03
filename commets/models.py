@@ -8,5 +8,5 @@ class Comment(models.Model):
     comment = models.TextField()
     date_comment = models.DateField(auto_now_add=True)
     is_active = models.BooleanField(blank=True, null=True,default=True)
-    user = models.ForeignKey("users.User", on_delete=models.CASCADE)
-    post = models.ForeignKey("posts.Post", on_delete=models.CASCADE)
+    user = models.ForeignKey("users.User", on_delete=models.CASCADE, related_name='comments')
+    post = models.ForeignKey("posts.Post", on_delete=models.CASCADE, related_name='comments')

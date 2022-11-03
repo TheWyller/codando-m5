@@ -9,7 +9,6 @@ class LanguageSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "name",
-            "url_doc",
         ]
         extra_kwargs = {
             "name": {
@@ -19,13 +18,5 @@ class LanguageSerializer(serializers.ModelSerializer):
                         message="language name already exists",
                     )
                 ]
-            },
-            "url_doc": {
-                "validators": [
-                    UniqueValidator(
-                        queryset=Language.objects.all(),
-                        message="documentation link already exists already exists",
-                    )
-                ]
-            },
+            }
         }
