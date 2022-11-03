@@ -2,7 +2,7 @@ from rest_framework import serializers
 from .models import Interaction, InteractionType
 
 
-class LanguageSerializer(serializers.ModelSerializer):
+class InteractionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Interaction
         fields = [
