@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework import generics
 
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, get_list_or_404
 
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
@@ -33,10 +33,15 @@ class PostView(generics.ListCreateAPIView):
         language_id = self.request.data["language"]
         user = self.request.user
         language = get_object_or_404(Language, pk=language_id)
+        categories = []
+        categories_data = self.request.data["categories"]
+        for item in categories_data:
+            categories.append(get_object_or_404(Category, id=item))
 
-        serializer.save(language=language, user=user)
+        serializer.save(language=language, user=user, categories=categories)
 
-@extend_schema(methods=['PUT'], exclude=True)
+
+@extend_schema(methods=["PUT"], exclude=True)
 class PostDetailView(generics.RetrieveUpdateDestroyAPIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [ListUpdateDeletePermission]
@@ -58,6 +63,7 @@ class PostOnCategoryView(generics.ListAPIView):
         category = get_object_by_id(Category, id=category_id)
         return category.posts
 
+
 class PostOnLanguageView(generics.ListAPIView):
     lookup_url_kwarg = "language_id"
 
@@ -69,6 +75,7 @@ class PostOnLanguageView(generics.ListAPIView):
 
         return Post.objects.filter(language=language_id)
 
+
 class PostsSelfUser(generics.ListAPIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
@@ -79,4 +86,3 @@ class PostsSelfUser(generics.ListAPIView):
         user = self.request.user
 
         return Post.objects.filter(user=user.id)
-

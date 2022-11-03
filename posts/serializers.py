@@ -6,12 +6,16 @@ from rest_framework.validators import UniqueValidator
 from users.serializers import UserSerializer
 from languages.serializers import LanguageSerializer
 from .services import get_comments_list, get_interactions_report
+from commets.serializers import CommentSerializer
+from interactions.serializers import InteractionSerializer
 
 
 class PostSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
     language = LanguageSerializer(read_only=True)
-    # categories = CategorySerializer(read_only=True)
+    categories = CategorySerializer(read_only=True, many=True)
+    comments = CommentSerializer(read_only=True, many=True)
+    interactions = InteractionSerializer(read_only=True, many=True)
     class Meta:
         model = Post
         fields = [
@@ -25,8 +29,8 @@ class PostSerializer(serializers.ModelSerializer):
             "title",
             "description",
             "url_logo",
-            # "comments",
-            # "interactions",
+            "comments",
+            "interactions",
         ]
         extra_kwargs = {
             "title": {
@@ -44,18 +48,15 @@ class PostSerializer(serializers.ModelSerializer):
                         message="A post with this documentation link already exists already exists",
                     )
                 ]
-            },
-            "user": {"read_only": True},
-            "language": {"read_only": True},
-            # "comments": {"read_only": True},
-            # "interactions": {"read_only": True},
+            }
+           
         }
-        
+
         # comments = serializers.SerializerMethodField(read_only=True)
         # interactions = serializers.SerializerMethodField(read_only=True)
 
-        def get_comments(self, obj: Post):
-            return get_comments_list(obj)
+        # def get_comments(self, obj: Post):
+        #     return get_comments_list(obj)
 
-        def get_interactions(self, obj: Post):
-            return get_interactions_report(obj)
+        # def get_interactions(self, obj: Post):
+        #     return get_interactions_report(obj)
