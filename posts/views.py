@@ -57,7 +57,6 @@ class PostOnCategoryView(generics.ListAPIView):
         category = get_object_by_id(Category, id=category_id)
         return category.posts
 
-
 class PostOnLanguageView(generics.ListAPIView):
     lookup_url_kwarg = "language_id"
 
@@ -68,3 +67,15 @@ class PostOnLanguageView(generics.ListAPIView):
         language_id = self.kwargs["language_id"]
 
         return Post.objects.filter(language=language_id)
+
+class PostsSelfUser(generics.ListAPIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    serializer_class = PostSerializer
+
+    def get_queryset(self):
+        user = self.request.user
+
+        return Post.objects.filter(user=user.id)
+
