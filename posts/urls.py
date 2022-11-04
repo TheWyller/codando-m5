@@ -7,4 +7,9 @@ urlpatterns = [
     path("posts/<str:post_id>/", views.PostDetailView.as_view()),
     path("posts/categories/<str:category_id>/", views.PostOnCategoryView.as_view()),
     path("posts/language/<str:language_id>/", views.PostOnLanguageView.as_view()),
+    path('posts/<str:post_id>/like/', views.AddLike.as_view()),
+    path('posts/<str:post_id>/dislike/', views.AddDislike.as_view()),
+    path('posts/<str:post_id>/interaction/', views.ListPostUserRelationInteraction.as_view()),
+    path('posts/interaction/likes/', views.ListAllLikesInteractions.as_view()),
+    path('posts/interaction/dislikes/', views.ListAllDislikesInteractions.as_view()),
 ]
