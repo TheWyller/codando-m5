@@ -52,7 +52,6 @@ THIRD_PARTY_APPS = [
 MY_APPS = [
     'categories',
     'commets',
-    'interactions',
     'languages',
     'posts',
     'users',

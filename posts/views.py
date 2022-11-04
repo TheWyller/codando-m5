@@ -1,17 +1,13 @@
-from django.shortcuts import render
 from rest_framework import generics
-
-from django.shortcuts import get_object_or_404, get_list_or_404
-
+from rest_framework.views import Response
+from django.shortcuts import get_object_or_404
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from languages.models import Language
-from posts.permissions import ListUpdateDeletePermission
-
+from posts.permissions import ListUpdateDeletePermission,HasPostPermission
 from .models import Post
 from categories.models import Category
-
-from .serializers import PostSerializer
+from .serializers import PostSerializer, PostListSerializer
 from categories.serializers import CategorySerializer
 from drf_spectacular.utils import extend_schema
 
@@ -86,3 +82,88 @@ class PostsSelfUser(generics.ListAPIView):
         user = self.request.user
 
         return Post.objects.filter(user=user.id)
+
+
+class AddLike(generics.CreateAPIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        user = request.user
+
+        post_id = kwargs["post_id"]
+        post = get_object_or_404(Post, id=post_id)
+
+        dislikes_array = post.dislikes.all()
+        if user in dislikes_array:
+            post.dislikes.remove(user)
+
+        likes_array = post.likes.all()
+        if user in likes_array:
+            post.likes.remove(user)
+            return Response({"dislike": False, "like": False})
+        post.likes.add(user)
+        return Response({"dislike": False, "like": True})
+
+
+class AddDislike(generics.CreateAPIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        user = request.user
+        
+        post_id = kwargs["post_id"]
+        post = get_object_or_404(Post, id=post_id)
+        likes_array = post.likes.all()
+        if user in likes_array:
+            post.likes.remove(user)
+
+        dislikes_array = post.dislikes.all()
+        if user in dislikes_array:
+            post.dislikes.remove(user)
+            return Response({"dislike": False, "like": False})
+        post.dislikes.add(user)
+        return Response({"dislike": True, "like": False})
+
+
+class ListPostUserRelationInteraction(generics.ListAPIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        user = request.user
+
+        post_id = kwargs["post_id"]
+        post = get_object_or_404(Post, id=post_id)
+
+        user_dislike = False
+        user_like = False
+
+        dislikes_array = post.dislikes.all()
+        likes_array = post.likes.all()
+
+        if user in dislikes_array:
+            user_dislike = True
+        if user in likes_array:
+            user_like = True
+
+        return Response({"dislike": user_dislike, "like": user_like})
+
+class ListAllDislikesInteractions(generics.ListAPIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    serializer_class = PostListSerializer
+
+    def get_queryset(self):
+        return self.request.user.dislikes.all()
+   
+    
+
+class ListAllLikesInteractions(generics.ListAPIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    serializer_class = PostListSerializer
+
+    def get_queryset(self):
+       return self.request.user.likes.all()
