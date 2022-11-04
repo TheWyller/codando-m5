@@ -2,9 +2,12 @@ from rest_framework import generics
 from rest_framework.views import Response
 from django.shortcuts import get_object_or_404
 from rest_framework.authentication import TokenAuthentication
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import (
+    IsAuthenticated,
+    IsAuthenticatedOrReadOnly
+    )
 from languages.models import Language
-from posts.permissions import ListUpdateDeletePermission, HasPostPermission
+from posts.permissions import ListUpdateDeletePermission
 from .models import Post
 from categories.models import Category
 from .serializers import PostSerializer, PostListSerializer
@@ -21,7 +24,7 @@ def get_object_by_id(model, **kwargs):
 
 class PostView(generics.ListCreateAPIView):
     authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
     serializer_class = PostSerializer
     queryset = Post.objects.all()
@@ -159,7 +162,6 @@ class ListPostUserRelationInteraction(generics.ListAPIView):
 
         current_comments = post.comments.all().filter(user=user)
         current_comments = ListCommentsSerializer(current_comments, many=True)
-
 
         return Response(
             {

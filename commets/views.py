@@ -6,8 +6,9 @@ from rest_framework.authentication import TokenAuthentication
 from commets.serializers import CommentSerializer
 from commets.models import Comment
 from posts.models import Post
-from users.permissions import CreateListPermission,ListUpdateDeletePermission
+from .permissions import ListUpdateDeletePermission
 from drf_spectacular.utils import extend_schema
+
 
 class CommentView(generics.ListCreateAPIView):
     authentication_classes = [TokenAuthentication]
@@ -20,7 +21,8 @@ class CommentView(generics.ListCreateAPIView):
         post_id = self.kwargs["post_id"]
         post = get_object_or_404(Post, pk=post_id)
 
-        serializer.save(user_id=user.id, post_id = post.id)
+        serializer.save(user_id=user.id, post_id=post.id)
+
 
 @extend_schema(methods=['PUT'], exclude=True)
 class CommentDetailView(generics.RetrieveUpdateDestroyAPIView):
@@ -31,7 +33,3 @@ class CommentDetailView(generics.RetrieveUpdateDestroyAPIView):
 
     serializer_class = CommentSerializer
     queryset = Comment.objects.all()
-    
-
-    
-
