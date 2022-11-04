@@ -57,6 +57,7 @@ class PostSerializer(serializers.ModelSerializer):
                 ]
             },
         }
+   
 
 class PostListSerializer(serializers.ModelSerializer):
     language = LanguageSerializer(read_only=True)

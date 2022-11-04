@@ -4,12 +4,13 @@ from django.shortcuts import get_object_or_404
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from languages.models import Language
-from posts.permissions import ListUpdateDeletePermission,HasPostPermission
+from posts.permissions import ListUpdateDeletePermission, HasPostPermission
 from .models import Post
 from categories.models import Category
 from .serializers import PostSerializer, PostListSerializer
 from categories.serializers import CategorySerializer
 from drf_spectacular.utils import extend_schema
+from commets.serializers import ListCommentsSerializer
 
 
 def get_object_by_id(model, **kwargs):
@@ -30,9 +31,17 @@ class PostView(generics.ListCreateAPIView):
         user = self.request.user
         language = get_object_or_404(Language, pk=language_id)
         categories = []
+
         categories_data = self.request.data["categories"]
         for item in categories_data:
-            categories.append(get_object_or_404(Category, id=item))
+            item["name"] = item["name"].lower().strip()
+
+        for item in categories_data:
+            data, _ = Category.objects.get_or_create(
+                defaults={"name": item["name"]},
+                **item,
+            )
+            categories.append(data)
 
         serializer.save(language=language, user=user, categories=categories)
 
@@ -112,7 +121,7 @@ class AddDislike(generics.CreateAPIView):
 
     def post(self, request, *args, **kwargs):
         user = request.user
-        
+
         post_id = kwargs["post_id"]
         post = get_object_or_404(Post, id=post_id)
         likes_array = post.likes.all()
@@ -148,7 +157,18 @@ class ListPostUserRelationInteraction(generics.ListAPIView):
         if user in likes_array:
             user_like = True
 
-        return Response({"dislike": user_dislike, "like": user_like})
+        current_comments = post.comments.all().filter(user=user)
+        current_comments = ListCommentsSerializer(current_comments, many=True)
+
+
+        return Response(
+            {
+                "dislike": user_dislike,
+                "like": user_like,
+                "current_user_comments_on_this_post": current_comments.data,
+            }
+        )
+
 
 class ListAllDislikesInteractions(generics.ListAPIView):
     authentication_classes = [TokenAuthentication]
@@ -157,8 +177,7 @@ class ListAllDislikesInteractions(generics.ListAPIView):
 
     def get_queryset(self):
         return self.request.user.dislikes.all()
-   
-    
+
 
 class ListAllLikesInteractions(generics.ListAPIView):
     authentication_classes = [TokenAuthentication]
@@ -166,4 +185,4 @@ class ListAllLikesInteractions(generics.ListAPIView):
     serializer_class = PostListSerializer
 
     def get_queryset(self):
-       return self.request.user.likes.all()
+        return self.request.user.likes.all()

@@ -14,3 +14,14 @@ class CommentSerializer(serializers.ModelSerializer):
             "post_id"
         ]
         read_only_fields = ["id","post_id"]
+
+class ListCommentsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Comment
+        fields = [
+            "id",
+            "comment",
+            "date_comment",
+            "post_id"
+        ]
+        read_only_fields = ["id","post_id"]
