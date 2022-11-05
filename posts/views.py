@@ -1,11 +1,8 @@
 from rest_framework import generics
-from rest_framework.views import Response
+from rest_framework.views import Response, Request
 from django.shortcuts import get_object_or_404
 from rest_framework.authentication import TokenAuthentication
-from rest_framework.permissions import (
-    IsAuthenticated,
-    IsAuthenticatedOrReadOnly
-    )
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from languages.models import Language
 from posts.permissions import ListUpdateDeletePermission
 from .models import Post
@@ -14,6 +11,7 @@ from .serializers import PostSerializer, PostListSerializer
 from categories.serializers import CategorySerializer
 from drf_spectacular.utils import extend_schema
 from commets.serializers import ListCommentsSerializer
+from django_filters import rest_framework as filters
 
 
 def get_object_by_id(model, **kwargs):
@@ -60,39 +58,13 @@ class PostDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Post.objects.all()
 
 
-class PostOnCategoryView(generics.ListAPIView):
-
-    serializer_class = CategorySerializer
-    queryset = Category.objects.all()
-    lookup_url_kwarg = "category_id"
-
-    def get_queryset(self):
-        category_id = self.kwargs["category_id"]
-        category = get_object_by_id(Category, id=category_id)
-        return category.posts
-
-
-class PostOnLanguageView(generics.ListAPIView):
-    lookup_url_kwarg = "language_id"
-
-    serializer_class = PostSerializer
-    queryset = Post.objects.all()
-
-    def get_queryset(self):
-        language_id = self.kwargs["language_id"]
-
-        return Post.objects.filter(language=language_id)
-
-
 class PostsSelfUser(generics.ListAPIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
-
     serializer_class = PostSerializer
 
     def get_queryset(self):
         user = self.request.user
-
         return Post.objects.filter(user=user.id)
 
 
@@ -188,3 +160,45 @@ class ListAllLikesInteractions(generics.ListAPIView):
 
     def get_queryset(self):
         return self.request.user.likes.all()
+
+
+class PostFilter(filters.FilterSet):
+
+    keyword = filters.CharFilter(field_name="title", lookup_expr="icontains")
+
+    class Meta:
+        model = Post
+        fields = [
+            "title",
+        ]
+
+
+class ListPostsWithFiltersView(generics.ListCreateAPIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    queryset = Post.objects.all()
+
+    serializer_class = PostListSerializer
+    filter_backends = (filters.DjangoFilterBackend,)
+    filterset_class = PostFilter
+
+
+class PostOnCategoryView(generics.ListAPIView):
+
+    serializer_class = PostSerializer
+    lookup_url_kwarg = "category_name"
+
+    def get_queryset(self):
+        category_name = self.kwargs["category_name"]
+        category = get_object_or_404(Category, name__icontains=category_name)
+        return category.posts.all()
+
+
+class PostOnLanguageView(generics.ListAPIView):
+    lookup_url_kwarg = "language_name"
+    serializer_class = PostSerializer
+    queryset = Post.objects.all()
+
+    def get_queryset(self):
+        language_name = self.kwargs["language_name"]
+        return Post.objects.filter(language__name__icontains=language_name)
