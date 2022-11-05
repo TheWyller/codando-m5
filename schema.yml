@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  title: '{c}odando API'
+  title: '{C}odando API'
   version: 1.0.0
   description: The idea of ​​the project is to develop an api that can list the frameworks
     and features of each language based on the popularity of the application's users.
@@ -8,6 +8,13 @@ paths:
   /api/categories/:
     get:
       operationId: api_categories_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
       tags:
       - api
       security:
@@ -17,9 +24,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Category'
+                $ref: '#/components/schemas/PaginatedCategoryList'
           description: ''
     post:
       operationId: api_categories_create
@@ -57,37 +62,6 @@ paths:
         required: true
       tags:
       - api
-      security:
-      - tokenAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Category'
-          description: ''
-    put:
-      operationId: api_categories_update
-      parameters:
-      - in: path
-        name: category_id
-        schema:
-          type: string
-        required: true
-      tags:
-      - api
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Category'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/Category'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/Category'
-        required: true
       security:
       - tokenAuth: []
       responses:
@@ -145,6 +119,13 @@ paths:
   /api/languages/:
     get:
       operationId: api_languages_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
       tags:
       - api
       security:
@@ -154,9 +135,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Language'
+                $ref: '#/components/schemas/PaginatedLanguageList'
           description: ''
     post:
       operationId: api_languages_create
@@ -194,37 +173,6 @@ paths:
         required: true
       tags:
       - api
-      security:
-      - tokenAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Language'
-          description: ''
-    put:
-      operationId: api_languages_update
-      parameters:
-      - in: path
-        name: language_id
-        schema:
-          type: string
-        required: true
-      tags:
-      - api
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Language'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/Language'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/Language'
-        required: true
       security:
       - tokenAuth: []
       responses:
@@ -309,18 +257,24 @@ paths:
   /api/posts/:
     get:
       operationId: api_posts_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
       tags:
       - api
       security:
       - tokenAuth: []
+      - {}
       responses:
         '200':
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Post'
+                $ref: '#/components/schemas/PaginatedPostList'
           description: ''
     post:
       operationId: api_posts_create
@@ -358,37 +312,6 @@ paths:
         required: true
       tags:
       - api
-      security:
-      - tokenAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Post'
-          description: ''
-    put:
-      operationId: api_posts_update
-      parameters:
-      - in: path
-        name: post_id
-        schema:
-          type: string
-        required: true
-      tags:
-      - api
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Post'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/Post'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/Post'
-        required: true
       security:
       - tokenAuth: []
       responses:
@@ -447,6 +370,12 @@ paths:
     get:
       operationId: api_posts_comments_list
       parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
       - in: path
         name: post_id
         schema:
@@ -462,9 +391,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Comment'
+                $ref: '#/components/schemas/PaginatedCommentList'
           description: ''
     post:
       operationId: api_posts_comments_create
@@ -498,7 +425,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Comment'
           description: ''
-  /api/posts/{post_id}/comments/{comment_id}:
+  /api/posts/{post_id}/comments/{comment_id}/:
     get:
       operationId: api_posts_comments_retrieve
       parameters:
@@ -514,42 +441,6 @@ paths:
         required: true
       tags:
       - api
-      security:
-      - tokenAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Comment'
-          description: ''
-    put:
-      operationId: api_posts_comments_update
-      parameters:
-      - in: path
-        name: comment_id
-        schema:
-          type: string
-        required: true
-      - in: path
-        name: post_id
-        schema:
-          type: string
-        required: true
-      tags:
-      - api
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Comment'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/Comment'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/Comment'
-        required: true
       security:
       - tokenAuth: []
       responses:
@@ -614,15 +505,69 @@ paths:
       responses:
         '204':
           description: No response body
-  /api/posts/categories/{category_id}/:
+  /api/posts/{post_id}/dislike/:
+    post:
+      operationId: api_posts_dislike_create
+      parameters:
+      - in: path
+        name: post_id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      responses:
+        '201':
+          description: No response body
+  /api/posts/{post_id}/interaction/:
+    get:
+      operationId: api_posts_interaction_retrieve
+      parameters:
+      - in: path
+        name: post_id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/posts/{post_id}/like/:
+    post:
+      operationId: api_posts_like_create
+      parameters:
+      - in: path
+        name: post_id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      responses:
+        '201':
+          description: No response body
+  /api/posts/categories/{category_name}/:
     get:
       operationId: api_posts_categories_list
       parameters:
       - in: path
-        name: category_id
+        name: category_name
         schema:
           type: string
         required: true
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
       tags:
       - api
       security:
@@ -634,13 +579,142 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Category'
+                $ref: '#/components/schemas/PaginatedPostList'
+          description: ''
+  /api/posts/filter/:
+    get:
+      operationId: api_posts_filter_list
+      parameters:
+      - in: query
+        name: keyword
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - in: query
+        name: title
+        schema:
+          type: string
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedPostListList'
+          description: ''
+    post:
+      operationId: api_posts_filter_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostList'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PostList'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PostList'
+        required: true
+      security:
+      - tokenAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostList'
+          description: ''
+  /api/posts/interaction/dislikes/:
+    get:
+      operationId: api_posts_interaction_dislikes_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedPostListList'
+          description: ''
+  /api/posts/interaction/likes/:
+    get:
+      operationId: api_posts_interaction_likes_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedPostListList'
+          description: ''
+  /api/posts/language/{language_name}/:
+    get:
+      operationId: api_posts_language_list
+      parameters:
+      - in: path
+        name: language_name
+        schema:
+          type: string
+        required: true
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedPostList'
           description: ''
   /api/posts/me/:
     get:
       operationId: api_posts_me_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
       tags:
       - api
       security:
@@ -650,13 +724,18 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Post'
+                $ref: '#/components/schemas/PaginatedPostList'
           description: ''
   /api/users/:
     get:
       operationId: api_users_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
       tags:
       - api
       security:
@@ -666,9 +745,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/PaginatedUserList'
           description: ''
     post:
       operationId: api_users_create
@@ -706,37 +783,6 @@ paths:
         required: true
       tags:
       - api
-      security:
-      - tokenAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UserUpdated'
-          description: ''
-    put:
-      operationId: api_users_update
-      parameters:
-      - in: path
-        name: user_id
-        schema:
-          type: string
-        required: true
-      tags:
-      - api
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UserUpdated'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/UserUpdated'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/UserUpdated'
-        required: true
       security:
       - tokenAuth: []
       responses:
@@ -833,11 +879,11 @@ components:
           type: string
         date_comment:
           type: string
-          format: date
+          format: date-time
           readOnly: true
-        user_id:
-          type: string
-          format: uuid
+        user:
+          allOf:
+          - $ref: '#/components/schemas/User'
           readOnly: true
         post_id:
           type: string
@@ -848,7 +894,7 @@ components:
       - date_comment
       - id
       - post_id
-      - user_id
+      - user
     Language:
       type: object
       properties:
@@ -859,12 +905,129 @@ components:
         name:
           type: string
           maxLength: 255
-        url_doc:
-          type: string
       required:
       - id
       - name
-      - url_doc
+    PaginatedCategoryList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Category'
+    PaginatedCommentList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Comment'
+    PaginatedLanguageList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Language'
+    PaginatedPostList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Post'
+    PaginatedPostListList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/PostList'
+    PaginatedUserList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
     PatchedCategory:
       type: object
       properties:
@@ -886,11 +1049,11 @@ components:
           type: string
         date_comment:
           type: string
-          format: date
+          format: date-time
           readOnly: true
-        user_id:
-          type: string
-          format: uuid
+        user:
+          allOf:
+          - $ref: '#/components/schemas/User'
           readOnly: true
         post_id:
           type: string
@@ -906,8 +1069,6 @@ components:
         name:
           type: string
           maxLength: 255
-        url_doc:
-          type: string
     PatchedPost:
       type: object
       properties:
@@ -926,8 +1087,8 @@ components:
         categories:
           type: array
           items:
-            type: string
-            format: uuid
+            $ref: '#/components/schemas/Category'
+          readOnly: true
         date:
           type: string
           format: date
@@ -943,6 +1104,17 @@ components:
           type: string
         url_logo:
           type: string
+        comments:
+          type: array
+          items:
+            $ref: '#/components/schemas/Comment'
+          readOnly: true
+        likes:
+          type: string
+          readOnly: true
+        dislikes:
+          type: string
+          readOnly: true
     PatchedUserUpdated:
       type: object
       properties:
@@ -999,8 +1171,8 @@ components:
         categories:
           type: array
           items:
-            type: string
-            format: uuid
+            $ref: '#/components/schemas/Category'
+          readOnly: true
         date:
           type: string
           format: date
@@ -1016,16 +1188,78 @@ components:
           type: string
         url_logo:
           type: string
+        comments:
+          type: array
+          items:
+            $ref: '#/components/schemas/Comment'
+          readOnly: true
+        likes:
+          type: string
+          readOnly: true
+        dislikes:
+          type: string
+          readOnly: true
       required:
       - categories
+      - comments
       - date
       - description
+      - dislikes
       - id
       - language
+      - likes
       - title
       - url_doc
       - url_logo
       - user
+    PostList:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        language:
+          allOf:
+          - $ref: '#/components/schemas/Language'
+          readOnly: true
+        categories:
+          type: array
+          items:
+            $ref: '#/components/schemas/Category'
+          readOnly: true
+        date:
+          type: string
+          format: date
+          readOnly: true
+        url_doc:
+          type: string
+        is_active:
+          type: boolean
+        title:
+          type: string
+          maxLength: 255
+        description:
+          type: string
+        url_logo:
+          type: string
+        likes:
+          type: string
+          readOnly: true
+        dislikes:
+          type: string
+          readOnly: true
+      required:
+      - categories
+      - date
+      - description
+      - dislikes
+      - id
+      - language
+      - likes
+      - title
+      - url_doc
+      - url_logo
     User:
       type: object
       properties:
