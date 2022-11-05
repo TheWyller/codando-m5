@@ -1,11 +1,11 @@
 from rest_framework import serializers
-from .models import Category
+from .models import Language
 from rest_framework.validators import UniqueValidator
 
 
-class CategorySerializer(serializers.ModelSerializer):
+class LanguageSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Category
+        model = Language
         fields = [
             "id",
             "name",
@@ -14,8 +14,8 @@ class CategorySerializer(serializers.ModelSerializer):
             "name": {
                 "validators": [
                     UniqueValidator(
-                        queryset=Category.objects.all(),
-                        message="category already exists",
+                        queryset=Language.objects.all(),
+                        message="language name already exists",
                     )
                 ]
             }

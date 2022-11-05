@@ -47,12 +47,13 @@ THIRD_PARTY_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'drf_spectacular',
+    'django_filters'
 ]
 
 MY_APPS = [
     'categories',
     'commets',
-    'interactions',
+    'languages',
     'posts',
     'users',
 ]
@@ -103,7 +104,7 @@ DATABASES = {
       "NAME": os.getenv("POSTGRES_DB"),
       "USER": os.getenv("POSTGRES_USER"),
       "PASSWORD": os.getenv("POSTGRES_PASSWORD"),
-      "HOST": "127.0.0.1",
+      "HOST": os.getenv("HOST"),
       "PORT": 5432,
     }
 }
@@ -153,6 +154,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10,
+    "DEFAULT_FILTER_BACKENDS": ("django_filters.rest_framework.DjangoFilterBackend",),
 }
 
 AUTH_USER_MODEL = "users.User"
@@ -164,3 +168,10 @@ if DATABASE_URL:
     DATABASES["default"].update(db)
 
     DEBUG = False
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': '{C}odando API',
+    'DESCRIPTION': "The idea of ​​the project is to develop an api that can list the frameworks and features of each language based on the popularity of the application's users.",
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+}
