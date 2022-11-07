@@ -15,3 +15,4 @@ class Post(models.Model):
     url_logo = models.TextField()
     likes = models.ManyToManyField("users.User", blank=True, related_name="likes")
     dislikes = models.ManyToManyField("users.User", blank=True, related_name="dislikes")
+    
