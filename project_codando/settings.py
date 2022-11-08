@@ -48,7 +48,8 @@ THIRD_PARTY_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'drf_spectacular',
-    'django_filters'
+    'django_filters',
+    'corsheaders'
 ]
 
 MY_APPS = [
@@ -69,7 +70,15 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
+
+CORS_ALLOWED_ORIGINS = [
+	'http://127.0.0.1:3000',
+	'http://127.0.0.1:5500',
+    'https://codandom5.herokuapp.com',
+]
+
 
 ROOT_URLCONF = 'project_codando.urls'
 

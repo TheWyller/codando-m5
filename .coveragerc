@@ -1,0 +1,11 @@
+[run]
+source = .
+omit = 
+    venv/*
+    project_codando/*
+    manage.py
+    */tests/*
+    */migrations/*
+
+[report]
+show_missing = True
