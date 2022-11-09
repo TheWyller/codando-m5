@@ -77,3 +77,7 @@ Execute as migrações utilizando o comando `./manage.py migrate` e execute o co
 ### 6. Execução do server
 
 Execute o server utilizando o comando `./manage.py runserver`
+
+<a href="https://github.com/TheWyller/codando-m5/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=TheWyller/codando-m5" />
+</a>
